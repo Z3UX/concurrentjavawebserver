@@ -26,6 +26,10 @@ public class ClientHandler implements Runnable {
 
             String requestMessage = input.readLine();
 
+            if (requestMessage == null) {
+                return;
+            }
+
             System.out.println(requestMessage);
 
             String[] requestMessageSplit = requestMessage.split("\\s+");

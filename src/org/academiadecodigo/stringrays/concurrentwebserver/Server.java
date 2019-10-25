@@ -1,18 +1,29 @@
 package org.academiadecodigo.stringrays.concurrentwebserver;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 public class Server {
 
     private ServerSocket serverSocket;
     private int portNumber;
+    private int maxConnections;
 
-    public Server(int portNumber) {
+
+    public Server(int maxConnections, int portNumber) {
+        this.maxConnections = maxConnections;
         this.portNumber = portNumber;
     }
+
     public void start() {
+
+
+        ExecutorService fixedPool = Executors.newFixedThreadPool(maxConnections);
 
         try {
 
@@ -22,7 +33,7 @@ public class Server {
 
                 Socket clientSocket = serverSocket.accept();
 
-                new Thread(new ClientHandler(clientSocket)).start();
+                fixedPool.execute(new ClientHandler(clientSocket));
             }
 
         } catch (IOException e) {
